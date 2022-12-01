@@ -1,8 +1,0 @@
-module Main where
-
-import qualified MwLib (someFunc)
-
-main :: IO ()
-main = do
-  putStrLn "Hello, Haskell!"
-  MwLib.someFunc
