@@ -37,6 +37,7 @@ While I did the above on my work Macbook, I also set up zsh on my Linux box usin
 and I installed the Meslo Nerd Font and set it as the font for my Gnome Terminal.
 
 [How I setup Neovim on my Mac to make it amazing](https://www.youtube.com/watch?v=vdn_pKJUda8)
+
 [How I use Tmux with Neovim for an awesome dev workflow on my Mac](https://www.youtube.com/watch?v=U-omALWIBos)
 
 ### Creating a new project
@@ -79,12 +80,12 @@ whatever day it is. To build the day1 executable I can do:
 cabal build day1
 ```
 
-To run it, I use `cabal exec` and after the name of the executable I
-want to run, I can add `--` and any command-line arguments. For example,
+To run it, I use `cabal run` and after the name of the executable I
+want to run and any command-line arguments. For example,
 if I want to pass an input filename like day1.txt, I can do this:
 
 ```
-cabal exec day1 -- day1.txt
+cabal run day1 data/day1.txt
 ```
 
 ### Vim & Tmux Flow
@@ -93,4 +94,4 @@ While there may be easier ways to do this, I create two Tmux windows and run Neo
 other. The `cabal repl` command gives me a Read-Eval-Print-Loop that I can use to try out my Haskell functions.
 When I make changes to the source code, I can do `:reload` from the REPL to load the most recent versions of my
 source files. This is what my terminal looks like:
-!(images/tmux.png)
+![tmux setup](images/tmux.png)
