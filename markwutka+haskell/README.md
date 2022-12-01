@@ -30,7 +30,9 @@ server. I have often used the Emacs integration, and I know that
 there is pretty good support in VS Code. But, I am currently using
 Neovim. I configured my environment using a series of videos by
 Josean Martinez:
+
 [How to make your boring Mac terminal so much better](https://www.youtube.com/watch?v=CF1tMjvHDRA)
+
 While I did the above on my work Macbook, I also set up zsh on my Linux box using an identical configuration
 and I installed the Meslo Nerd Font and set it as the font for my Gnome Terminal.
 
