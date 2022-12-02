@@ -88,6 +88,10 @@ if I want to pass an input filename like day1.txt, I can do this:
 cabal run day1 data/day1.txt
 ```
 
+I also created a `day_template.hs` file that just takes a filename as a
+command-line argument and calls readFile on it. I don't remember an
+Advent of Code problem where I didn't have to do at least that.
+
 ### Vim & Tmux Flow
 
 While there may be easier ways to do this, I create two Tmux windows and run Neovim in one and do `cabal repl` in the
