@@ -93,3 +93,12 @@ executable day2
         markaoc
     hs-source-dirs:   app
     default-language: Haskell2010
+
+executable day3
+    import:           warnings
+    main-is:          day3.hs
+    build-depends:
+        base ^>=4.14.3.0,
+        markaoc
+    hs-source-dirs:   app
+    default-language: Haskell2010
