@@ -35,9 +35,7 @@ defmodule Aoc2022.Day04 do
   def is_inside(_first, _second), do: false
 
   def does_intersect([[first_start, first_finish], [second_start, second_finish]]) do
-    first_mapset = MapSet.new(first_start..first_finish)
-    second_mapset = MapSet.new(second_start..second_finish)
-    !MapSet.disjoint?(first_mapset, second_mapset)
+    !Range.disjoint?(first_start..first_finish, second_start..second_finish)
   end
 
   def parse(line) do
