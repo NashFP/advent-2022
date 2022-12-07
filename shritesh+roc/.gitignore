@@ -1,2 +1,4 @@
 # roc exec artifacts
 advent-*
+# roc format failures
+*.roc-format-failed*
