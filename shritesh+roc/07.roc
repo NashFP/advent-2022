@@ -11,12 +11,11 @@ main =
         input = parse inputStr
 
         p1 = part1 input |> Num.toStr
+        p2 = part2 input |> Num.toStr
 
-        p2 <- part2 input |> Result.map Num.toStr |> Task.fromResult |> Task.await
+        Stdout.write "Part 1: \(p1)\nPart 2: \(p2)\n"
 
-        Stdout.write "Part 1: \(p1)\n Part 2: \(p2)\n"
-
-    Task.onFail task \_ -> crash "Unable to read input or find results"
+    Task.onFail task \_ -> crash "Unable to read input"
 
 part1 = \fs ->
     Dict.keys fs
@@ -32,19 +31,17 @@ part2 = \fs ->
     |> List.map \dir -> dirSize fs dir
     |> List.keepIf \n -> n >= required
     |> List.min
+    |> unwrap "None of the dirs satisfy the required size"
 
 dirSize = \fs, dir ->
-    when Dict.get fs dir is
-        Ok list ->
-            sizes =
-                entry <- List.map list
-                when entry is
-                    File _name size -> size
-                    Dir subdir -> dirSize fs subdir
+    sizes =
+        entry <- Dict.get fs dir |> unwrap "Dir not found" |> List.map
 
-            List.sum sizes
+        when entry is
+            File _name size -> size
+            Dir subdir -> dirSize fs subdir
 
-        Err _ -> crash "Dir not found"
+    List.sum sizes
 
 parse = \inputStr ->
     acc =
@@ -76,9 +73,9 @@ parse = \inputStr ->
                         [""] -> []
                         ["dir", d] -> [List.append state.cwd d |> Dir]
                         [size, name] ->
-                            when Str.toNat size is
-                                Ok s -> [File name s]
-                                Err _ -> crash "invalid size '\(size)' for '\(name)'"
+                            sz = Str.toNat size |> unwrap "invalid size '\(size)' for '\(name)'"
+
+                            [File name sz]
 
                         _ -> crash "invalid listing"
 
@@ -87,3 +84,8 @@ parse = \inputStr ->
             _ -> crash "invalid command"
 
     acc.fs
+
+unwrap = \result, msg ->
+    when result is
+        Ok x -> x
+        Err _ -> crash msg
