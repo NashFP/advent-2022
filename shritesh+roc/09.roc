@@ -43,7 +43,7 @@ move = \state, { direction, count } ->
             Right -> { x: state.head.x + 1, y: state.head.y }
 
         tails =
-            prev, tail <- scanAccessMap state.tails head .location
+            prev, tail <- scanWith state.tails head .location
             distx = prev.x - tail.location.x
             disty = prev.y - tail.location.y
 
@@ -52,7 +52,7 @@ move = \state, { direction, count } ->
                 if distx >= -1 && distx <= 1 && disty >= -1 && disty <= 1 then
                     tail.location
                 else
-                    { x: tail.location.x + norm distx, y: tail.location.y + norm disty }
+                    { x: tail.location.x + sign distx, y: tail.location.y + sign disty }
 
             visits = Set.insert tail.visits location
 
@@ -60,14 +60,13 @@ move = \state, { direction, count } ->
 
         move { head, tails } { direction, count: count - 1 }
 
-# convert to -1, 0 or 1
-norm = \n ->
-    when n is
-        _ if n < 0 -> -1
-        _ if n > 0 -> 1
-        _ -> 0
+sign = \n ->
+    when Num.compare n 0 is
+        LT -> -1
+        GT -> 1
+        EQ -> 0
 
-scanAccessMap = \list, init, accessor, fn ->
+scanWith = \list, init, accessor, fn ->
     List.walk list { state: init, acc: [] } \{ state, acc }, elem ->
         res = fn state elem
 
