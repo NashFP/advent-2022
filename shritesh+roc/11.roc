@@ -46,32 +46,24 @@ run = \{ items, monkeys }, rounds, mapper ->
         trueItems = List.keepIf newItems \n -> n % monkey.test == 0
         falseItems = List.dropIf newItems \n -> n % monkey.test == 0
 
-        trueMonkeyItems = List.join [
-            List.get state.items monkey.ifTrue |> unwrap,
-            trueItems,
-        ]
-
-        falseMonkeyItems = List.join [
-            List.get state.items monkey.ifFalse |> unwrap,
-            falseItems,
-        ]
-
         finalItems =
             List.mapWithIndex state.items \list, j ->
                 if j == id then
                     []
                 else if j == monkey.ifTrue then
-                    trueMonkeyItems
+                    List.join [list, trueItems]
                 else if j == monkey.ifFalse then
-                    falseMonkeyItems
+                    List.join [list, falseItems]
                 else
                     list
 
-        inspection = List.get state.inspections id |> unwrap |> Num.add (List.len newItems)
+        inspections = List.mapWithIndex state.inspections \inspection, j ->
+            if j == id then
+                inspection + List.len newItems
+            else
+                inspection
 
-        newInspections = List.set state.inspections id inspection
-
-        { items: finalItems, inspections: newInspections }
+        { items: finalItems, inspections }
 
     List.sortDesc finalState.inspections |> List.takeFirst 2 |> List.product
 
@@ -83,7 +75,7 @@ parse = \inputStr ->
             [_idLine, startingLine, operationLine, testLine, ifTrueLine, ifFalseLine] ->
                 startingItems <- parseStartingLine startingLine |> Result.try
                 operation <- parseOperationLine operationLine |> Result.try
-                test <- parseLastNumberInLine testLine "test" |> Result.map Num.toU128 |> Result.try
+                test <- parseLastNumberInLine testLine "test" |> Result.map Num.toNat |> Result.try
                 ifTrue <- parseLastNumberInLine ifTrueLine "true condition" |> Result.try
                 ifFalse <- parseLastNumberInLine ifFalseLine "false condition" |> Result.map
 
@@ -108,7 +100,7 @@ parseStartingLine = \startingLine ->
     when Str.split startingLine ": " is
         [_, numbers] ->
             Str.split numbers ", "
-            |> List.mapTry Str.toU128
+            |> List.mapTry Str.toNat
             |> Result.mapErr \_ -> ParseError "starting items number parsing failed: \(numbers)"
 
         _ -> Err (ParseError "starting line parse failed")
@@ -116,8 +108,8 @@ parseStartingLine = \startingLine ->
 parseOperationLine = \operationLine ->
     when Str.split operationLine " " |> List.takeLast 2 is
         ["*", "old"] -> Ok OldTimesOld
-        ["+", n] -> Str.toU128 n |> Result.map OldPlus
-        ["*", n] -> Str.toU128 n |> Result.map OldTimes
+        ["+", n] -> Str.toNat n |> Result.map OldPlus
+        ["*", n] -> Str.toNat n |> Result.map OldTimes
         _ -> Err (ParseError "invalid operation: \(operationLine)")
 
 parseLastNumberInLine = \line, title ->
